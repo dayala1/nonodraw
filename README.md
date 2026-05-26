@@ -6,10 +6,15 @@ Typst helpers for rendering nonogram boards in a flexible manner, offering a cor
 - `modern-board` for a more modern visual style.
 
 Both offer numerous options for customization of the board, but deeper customization is possible by implementing alternative callbacks and passing them to the `draw-board` function.
+Boards can be rendered solved or unsolved. When shown solved, the solution can be masked to only show part of it, and clues can be marked to highlight the ones that have been solved.
 
 ## The board matrix
 
 The board matrix is a 2D array where 0s represent empty cells (not included in the clues) and other values represent filled cells. By default, 1s are used to represent standard cells, and short strings are used to represent colored ones (e.g., "r" for red, "g" for green, etc.). The package can be configured to use other values as needed, as well as different colors, content, and styles.
+
+The matrix can be constructed manually, or parsed from plain text using the `text-to-matrix` function, which accepts a string representation of the board in which each line corresponds to a row, and each cell is represented by a character (by default "1" for filled, "0" for empty):
+
+```
 
 ## Gallery
 
@@ -41,10 +46,14 @@ The board matrix is a 2D array where 0s represent empty cells (not included in t
   <img src="examples/Example%2010.svg" alt="Compact solution-only rendering" width="20%">
 </p>
 
-### Board created from clues
+### Small examples
+
+In order: board rendered with manual clues, board rendered with a solution matrix but only partially shown using a display mask and marked clues, and board rendered from a matrix parsed from plain text.
 
 <p>
-  <img src="examples/Example%2011.svg" alt="Board rendered from manual clues" width="20%">
+  <img src="examples/Example%2011.svg" alt="Board rendered from manual clues" width="15%">
+  <img src="examples/Example%2012.svg" alt="Partial board with masked solution and marked clues" width="15%">
+  <img src="examples/Example%2013.svg" alt="Board rendered from a matrix parsed from plain text" width="15%">
 </p>
 
 ## Usage
