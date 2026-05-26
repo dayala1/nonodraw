@@ -156,7 +156,7 @@
 #pagebreak()
 
 // Example with manual clues and no predefined solution shown.
-#style-1(
+#classical-board(
   show-solution: false,
   none,
   column-clues: (
@@ -172,5 +172,40 @@
     (3,),
     (3,),
     (1, 2),
+  ),
+)
+
+#pagebreak()
+
+// Example with partially shown board using display mask, and some clues marked.
+#classical-board(
+  show-solution: true,
+  (
+    (1, 0, 0, 0, 1),
+    (1, 0, 0, 0, 1),
+    (1, 1, 1, 0, 0),
+    (1, 1, 1, 0, 0),
+    (1, 0, 1, 0, 0),
+  ),
+  display-mask: (
+    (1, 1, 1, 0, 0),
+    (1, 1, 0, 0, 0),
+    (1, 1, 0, 0, 0),
+    (1, 1, 0, 0, 0),
+    (1, 1, 1, 1, 0),
+  ),
+  marked-column-clues: ((0,0), (1,0)),
+  marked-row-clues: ((0,0), (1,0), (4,0), (4,1)),
+)
+
+// Example using matrix generated from text.
+#classical-board(
+  show-solution: true,
+  text-to-matrix(
+   "11011
+    10001
+    11100
+    11100
+    10100"
   ),
 )

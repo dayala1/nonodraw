@@ -1,4 +1,4 @@
-#import "./core.typ" : *
+#import "./core.typ": *
 
 // Draw one classical column clue cell.
 // = Arguments:
@@ -12,6 +12,10 @@
 // The width and height of the clue cell.
 // == `text-processor`
 // A callback applied to the displayed `count` before it is placed in the cell.
+// == `marker`
+// A callback that adds a marker to the clue cell when `additional-info.marked` is true.
+// It receives the cell content, the resolved foreground color, and the resolved background
+// color, and should return the modified, marked-up content.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, `default-background`, and `color-lightness-threshold`
@@ -31,6 +35,10 @@
   additional-info: (:),
   cell-size: 1em,
   text-processor: value => [#value],
+  marker: (contents, foreground-color, background-color) => [#contents#place(center + horizon, rotate(-45deg, line(
+      length: 100%,
+      stroke: (paint: foreground-color, cap: "round"),
+    )))],
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -93,8 +101,14 @@
       foreground-color = black
     }
   }
+  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
+    [#text-processor(str(count))]
+  })
+  if additional-info.marked {
+    cell-content = marker(cell-content, foreground-color, background-color)
+  }
   grid.cell(stroke: stroke, fill: background-color, align(center + horizon, block(width: cell-size, height: cell-size, {
-    text(fill: foreground-color, font: font, if value == none { "" } else { [#text-processor(str(count))] })
+    cell-content
   })))
 }
 
@@ -110,6 +124,10 @@
 // The width and height of the clue cell.
 // == `text-processor`
 // A callback applied to the displayed `count` before it is placed in the cell.
+// == `marker`
+// A callback that adds a marker to the clue cell when `additional-info.marked` is true.
+// It receives the cell content, the resolved foreground color, and the resolved background
+// color, and should return the modified, marked-up content.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, `default-background`, and `color-lightness-threshold`
@@ -129,6 +147,10 @@
   additional-info: (:),
   cell-size: 1em,
   text-processor: value => [#value],
+  marker: (contents, foreground-color, background-color) => [#contents#place(center + horizon, rotate(-45deg, line(
+      length: 100%,
+      stroke: (paint: foreground-color, cap: "round"),
+    )))],
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -191,8 +213,14 @@
       foreground-color = black
     }
   }
+  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
+    [#text-processor(str(count))]
+  })
+  if additional-info.marked {
+    cell-content = marker(cell-content, foreground-color, background-color)
+  }
   grid.cell(stroke: stroke, fill: background-color, align(center + horizon, block(width: cell-size, height: cell-size, {
-    text(fill: foreground-color, font: font, if value == none { "" } else { [#text-processor(str(count))] })
+    cell-content
   })))
 }
 
@@ -270,7 +298,7 @@
   if colorizer != none and content != "fill" {
     content = colorizer(content, color, value)
   }
-  if not show-solution {
+  if not show-solution or value == none {
     content = none
   }
   if content == "fill" {
@@ -296,6 +324,10 @@
 // The width and height of the clue cell.
 // == `text-processor`
 // A callback applied to the displayed `count` before it is placed in the cell.
+// == `marker`
+// A callback that adds a marker to the clue cell when `additional-info.marked` is true.
+// It receives the cell content, the resolved foreground color, and the resolved background
+// color, and should return the modified, marked-up content.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, and `color-lightness-threshold`
@@ -313,6 +345,10 @@
   additional-info: (:),
   cell-size: 1em,
   text-processor: value => [#value],
+  marker: (contents, foreground-color, background-color) => [#contents#place(center + horizon, rotate(-45deg, line(
+      length: 100%,
+      stroke: (paint: foreground-color, cap: "round"),
+    )))],
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -347,8 +383,14 @@
       foreground-color = black
     }
   }
+  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
+    [#text-processor(str(count))]
+  })
+  if additional-info.marked {
+    cell-content = marker(cell-content, foreground-color, background-color)
+  }
   grid.cell(align(center + horizon, block(fill: background-color, width: cell-size, height: cell-size, radius: radius, {
-    text(fill: foreground-color, font: font, if value == none { "" } else { [#text-processor(str(count))] })
+    cell-content
   })))
 }
 
@@ -364,6 +406,10 @@
 // The width and height of the clue cell.
 // == `text-processor`
 // A callback applied to the displayed `count` before it is placed in the cell.
+// == `marker`
+// A callback that adds a marker to the clue cell when `additional-info.marked` is true.
+// It receives the cell content, the resolved foreground color, and the resolved background
+// color, and should return the modified, marked-up content.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, and `color-lightness-threshold`
@@ -381,6 +427,10 @@
   additional-info: (:),
   cell-size: 1em,
   text-processor: value => [#value],
+  marker: (contents, foreground-color, background-color) => [#contents#place(center + horizon, rotate(-45deg, line(
+      length: 100%,
+      stroke: (paint: foreground-color, cap: "round"),
+    )))],
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -415,8 +465,14 @@
       foreground-color = black
     }
   }
+  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
+    [#text-processor(str(count))]
+  })
+  if additional-info.marked {
+    cell-content = marker(cell-content, foreground-color, background-color)
+  }
   grid.cell(align(center + horizon, block(fill: background-color, width: cell-size, height: cell-size, radius: radius, {
-    text(fill: foreground-color, font: font, if value == none { "" } else { [#text-processor(str(count))] })
+    cell-content
   })))
 }
 
@@ -523,7 +579,7 @@
       if colorizer != none and content != "fill" {
         content = colorizer(content, color, value)
       }
-      if not show-solution {
+      if not show-solution or value == none{
         content = none
       }
       place(center + horizon, if content == "fill" {
@@ -561,10 +617,10 @@
 
 // Render a puzzle using the classical square-grid style.
 // = Arguments:
-// For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, `hide-clues`, and `display-mask`, see `draw-board`.
-// 
+// For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, `marked-column-clues`, `marked-row-clues`, `hide-clues`, and `display-mask`, see `draw-board`.
+//
 // For `cell-size`, `show-solution`, `color-map`, `content-map`, `cell-colorizer`, `cell-default-background`, `weak-stroke`, and `strong-stroke`, see `classical-cell-drawer`.
-// 
+//
 // For`clue-text-processor`, `clue-coloring`, `clue-omit-default-background`, `clue-default-background`, `clue-color-lightness-threshold`, `font`, `weak-stroke`, `strong-stroke`, `clue-close-opposite-strokes`, `clue-draw-parallel-weak-strokes`, `clue-draw-parallel-strong-strokes`, and `clue-draw-perpendicular-strokes`
 // see `classical-column-cell-drawer` and `classical-row-cell-drawer`.
 // == `text-size`
@@ -575,6 +631,8 @@
   column-clues: none,
   row-clues: none,
   hide-clues: false,
+  marked-column-clues: none,
+  marked-row-clues: none,
   cell-size: 1em,
   text-size: 1em,
   show-solution: false,
@@ -649,6 +707,8 @@
     ),
     column-clues: column-clues,
     row-clues: row-clues,
+    marked-column-clues: marked-column-clues,
+    marked-row-clues: marked-row-clues,
     hide-clues: hide-clues,
     display-mask: display-mask,
     corner-cell-drawer: corner-cell-drawer,
@@ -657,7 +717,7 @@
 
 // Render a puzzle using the modern rounded style.
 // = Arguments:
-// For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, and `hide-clues`, see `draw-board`.
+// For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, `marked-column-clues`, `marked-row-clues`, and `hide-clues`, see `draw-board`.
 //
 // For `cell-size`, `show-solution`, `cell-strong-stroke`, `cell-background-color`, `color-map`, `content-map`, `cell-colorizer`, and `cell-default-background`, see `modern-cell-drawer`.
 //
@@ -670,6 +730,8 @@
   column-clues: none,
   row-clues: none,
   hide-clues: false,
+  marked-column-clues: none,
+  marked-row-clues: none,
   cell-size: 1em,
   text-size: 1em,
   show-solution: false,
@@ -696,6 +758,7 @@
   clue-coloring: "background",
   clue-omit-default-background: true,
   clue-color-lightness-threshold: 50%,
+  display-mask: none,
 ) => {
   set text(text-size)
   draw-board(
@@ -734,7 +797,10 @@
     ),
     column-clues: column-clues,
     row-clues: row-clues,
+    marked-column-clues: marked-column-clues,
+    marked-row-clues: marked-row-clues,
     hide-clues: hide-clues,
+    display-mask: display-mask,
     corner-cell-drawer: corner-cell-drawer,
   )
 };

@@ -84,6 +84,12 @@
 // == `column-clues` and `row-clues`
 // Optional explicit clues that override the ones computed from `board-matrix`.
 // Each clue line can contain `(value, count)` pairs or bare counts.
+// == `marked-column-clues` and `marked-row-clues`
+// Optional lists of coordinates of clues to be rendered in a "marked" state, which
+// can be used to indicate clues that are satisfied in the current board state. 
+// Coordinates are given as `(index, clue-position)`, where `index` is the row or
+// column index of the clue and `clue-position` is the position of the clue in the
+// clue line, counting from the outer end.
 // == `hide-clues`
 // If `true`, clue cells are omitted while the puzzle grid is still rendered.
 // == `corner-cell-drawer`
@@ -97,6 +103,8 @@
   display-mask: none,
   column-clues: none,
   row-clues: none,
+  marked-column-clues: none,
+  marked-row-clues: none,
   hide-clues: false,
   corner-cell-drawer: (height, width) => grid.cell(rowspan: height, colspan: width, ""),
 ) = {
@@ -180,7 +188,8 @@
         } else {
           (none, none)
         }
-        cells.push(column-cell-drawer(value, count, row, col, additional-info: (width: width, height: height)))
+        let marked = marked-column-clues != none and marked-column-clues.contains((col, (row - (col-max-height - num-values))))
+        cells.push(column-cell-drawer(value, count, row, col, additional-info: (width: width, height: height, marked: marked)))
       }
     }
   }
@@ -196,7 +205,8 @@
         } else {
           (none, 0)
         }
-        cells.push(row-cell-drawer(value, count, row, col, additional-info: (width: width, height: height)))
+        let marked = marked-row-clues != none and marked-row-clues.contains((row, (col - (row-max-width - num-values))))
+        cells.push(row-cell-drawer(value, count, row, col, additional-info: (width: width, height: height, marked: marked)))
       }
     }
     // Hell is over, now rest of normal cells for each column in the row
@@ -214,4 +224,26 @@
 
   // tadah
   block(breakable: false, grid(columns: width + (if not hide-clues { row-max-width } else { 0 }), ..cells))
+}
+
+// Utility to convert a multiline string representation of a board into a matrix.
+// Arguments:
+// - `text`: the multiline string representing the board. Each line corresponds to a row, and each character corresponds to a cell.
+// - `row-separator`: the character(s) used to separate rows in the input text. Default is newline.
+// - `char-to-value`: a map that converts characters in the input text to cell values. Default maps "0" to 0 and "1" to 1.
+#let text-to-matrix(text, row-separator: "\n", char-to-value:("0": 0, "1": 1)) = {
+  let lines = text.split(row-separator).map(line => line.trim()).filter(line => line.len() > 0)
+  let matrix = ()
+  for line in lines {
+    let row = ()
+    for char in line {
+      assert(
+        char in char-to-value.keys(),
+        message: "Character '" + char + "' not found in char-to-value map.",
+      )
+      row.push(char-to-value.at(char))
+    }
+    matrix.push(row)
+  }
+  matrix
 }
