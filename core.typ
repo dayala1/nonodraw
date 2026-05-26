@@ -51,15 +51,19 @@
   clues.map(clue-line => normalize-clue-line(clue-line, default-value: default-value))
 }
 
-// Resolve a value through a string-keyed map, falling back to the map's
-// `default` entry or the explicit `default` argument.
+// Resolve a value through a string-keyed map or callback, falling back to the
+// map's `default` entry or the explicit `default` argument.
 #let get-value(value, map, default: none) = {
-  if ((value != none) and str(value) in map.keys()) {
-    map.at(str(value))
-  } else if "default" in map.keys() {
-    map.at("default")
+  if type(map) == function {
+    map(value)
   } else {
-    default
+    if ((value != none) and str(value) in map.keys()) {
+      map.at(str(value))
+    } else if "default" in map.keys() {
+      map.at("default")
+    } else {
+      default
+    }
   }
 }
 
@@ -76,7 +80,8 @@
 // `width` and `height`.
 // == `column-cell-drawer` and `row-cell-drawer`
 // Callbacks that render clue cells. They receive `(value, count, row, col)` and
-// an `additional-info` dictionary containing the board `width` and `height`.
+// an `additional-info` dictionary containing the board `width`, `height`, and
+// whether the clue is currently `marked`.
 // == `display-mask`
 // An optional 2D mask used when `board-matrix` is present. Cells masked with
 // values other than `1` or `true` are passed to `cell-drawer` as `none` while
@@ -86,7 +91,7 @@
 // Each clue line can contain `(value, count)` pairs or bare counts.
 // == `marked-column-clues` and `marked-row-clues`
 // Optional lists of coordinates of clues to be rendered in a "marked" state, which
-// can be used to indicate clues that are satisfied in the current board state. 
+// can be used to indicate clues that are satisfied in the current board state.
 // Coordinates are given as `(index, clue-position)`, where `index` is the row or
 // column index of the clue and `clue-position` is the position of the clue in the
 // clue line, counting from the outer end.
@@ -188,8 +193,14 @@
         } else {
           (none, none)
         }
-        let marked = marked-column-clues != none and marked-column-clues.contains((col, (row - (col-max-height - num-values))))
-        cells.push(column-cell-drawer(value, count, row, col, additional-info: (width: width, height: height, marked: marked)))
+        let marked = (
+          marked-column-clues != none and marked-column-clues.contains((col, (row - (col-max-height - num-values))))
+        )
+        cells.push(column-cell-drawer(value, count, row, col, additional-info: (
+          width: width,
+          height: height,
+          marked: marked,
+        )))
       }
     }
   }
@@ -206,7 +217,11 @@
           (none, 0)
         }
         let marked = marked-row-clues != none and marked-row-clues.contains((row, (col - (row-max-width - num-values))))
-        cells.push(row-cell-drawer(value, count, row, col, additional-info: (width: width, height: height, marked: marked)))
+        cells.push(row-cell-drawer(value, count, row, col, additional-info: (
+          width: width,
+          height: height,
+          marked: marked,
+        )))
       }
     }
     // Hell is over, now rest of normal cells for each column in the row
@@ -230,18 +245,24 @@
 // Arguments:
 // - `text`: the multiline string representing the board. Each line corresponds to a row, and each character corresponds to a cell.
 // - `row-separator`: the character(s) used to separate rows in the input text. Default is newline.
-// - `char-to-value`: a map that converts characters in the input text to cell values. Default maps "0" to 0 and "1" to 1.
-#let text-to-matrix(text, row-separator: "\n", char-to-value:("0": 0, "1": 1)) = {
+// - `char-to-value`: a map that converts characters in the input text to cell values. Default maps "0" to 0 and "1" to 1. Can also be a function that takes a character and returns a value.
+#let text-to-matrix(text, row-separator: "\n", char-to-value: ("0": 0, "1": 1)) = {
   let lines = text.split(row-separator).map(line => line.trim()).filter(line => line.len() > 0)
   let matrix = ()
   for line in lines {
     let row = ()
     for char in line {
-      assert(
-        char in char-to-value.keys(),
-        message: "Character '" + char + "' not found in char-to-value map.",
-      )
-      row.push(char-to-value.at(char))
+      if type(char-to-value) == dictionary {
+        assert(
+          char in char-to-value.keys(),
+          message: "Character '" + char + "' not found in char-to-value map.",
+        )
+        row.push(char-to-value.at(char))
+      } else {
+        row.push(char-to-value(char))
+      }
+
+      
     }
     matrix.push(row)
   }

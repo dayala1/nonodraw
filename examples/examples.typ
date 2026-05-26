@@ -211,3 +211,59 @@
     10100"
   ),
 )
+
+#pagebreak()
+
+// Example using fully custom clue content drawer.
+#classical-board(
+  show-solution: true,
+  text-to-matrix(
+   "0000◢◢0000
+    0000◤◤◢◢◢◢
+    000◢■■◣■■◤
+    00◢◢■■◥◣■◤
+    0◢■■■◤◥■◣◤
+    0■■00◥◣0◥◣
+    0◤◤000◣◥◣■
+    000000■◢◥◥
+    00000◢■■◣0
+    00000◣0■◤0",
+    char-to-value: char => if char == "0" { 0 } else { char},
+  ),
+  // How cells are drawn
+  content-map: (
+    "0": none,
+    "■": "fill",
+    "◢": polygon(fill: black,(100%, 0%), (0%, 100%), (100%, 100%)),
+    "◣": polygon(fill: black,(0%, 0%), (0%, 100%), (100%, 100%)),
+    "◤": polygon(fill: black,(0%, 100%), (0%, 0%), (100%, 0%)),
+    "◥": polygon(fill: black,(0%, 0%), (100%, 0%), (100%, 100%)),
+  ),
+  font: "Dejavu Sans Mono",
+  clue-draw-parallel-weak-strokes: true,
+  // How clue content is drawn
+  clue-content-drawer: (value, count, row, col, additional-info) => {
+    // We only display counts greater than 1
+    if count == 1 {
+      count = ""
+    } else if count != none {
+      count = str(count)
+    }
+    set text(0.9em,weight: 999, fill: white, stroke: 0.5pt, font: "Dejavu Sans Mono")
+    if value == "■" {
+      place(center+horizon, block(width:100%, height: 100%, fill:black, count))
+    } else if value == "◢" {
+      polygon(fill: black,(100%, 0%), (0%, 100%), (100%, 100%))
+      place(center+horizon, count)
+    } else if value == "◣" {
+      polygon(fill: black,(0%, 0%), (0%, 100%), (100%, 100%))
+      place(center+horizon, count)
+    } else if value == "◤" {
+      polygon(fill: black,(0%, 100%), (0%, 0%), (100%, 0%))
+      place(center+horizon, count)
+    } else if value == "◥" {
+      polygon(fill: black,(0%, 0%), (100%, 0%), (100%, 100%))
+      place(center+horizon, count)
+    }
+  },
+)

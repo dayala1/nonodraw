@@ -40,9 +40,21 @@ The matrix can be constructed manually, or parsed from plain text using the `tex
 
 ### Only solution
 
+The following example was created by hiding the clues and simplifying the strokes to obtain a result that could be used as a compact solution rendering.
+
 <p>
   <img src="examples/Example%2010.svg" alt="Compact solution-only rendering" width="20%">
 </p>
+
+### Full clue customization
+
+The following example was created by customizing the clue content drawer to show the clue counts inside the clue cells as well as the solution. The result is a typical nonogram with triangles.
+
+<p>
+  <img src="examples/Example%2014.svg" alt="Compact solution-only rendering" width="50%"> </br>
+  <small>Source: fragment from the cover of "Trianograms".</small>
+</p>
+
 
 ### Small examples
 
@@ -90,6 +102,17 @@ Its main rendering hooks are:
 - `corner-cell-drawer` for the top-left spanning corner cell
 
 If you want a custom appearance, build it on top of `draw-board` by supplying your own callbacks. If you want ready-made styles, use `classical-board` or `modern-board`.
+
+## Customization Notes
+
+The package resolves several style lookups through `get-value`. Whenever a parameter is described as a map, it can also be a callback function. In particular, `color-map`, `content-map`, and similar value-driven maps accepted by the provided drawers may be either:
+
+- a string-keyed Typst dictionary with an optional `default` entry
+- a function that receives the board or clue value and returns the resolved entry
+
+The provided clue drawers also expose `content-drawer`, an optional callback that lets you render clue contents directly instead of going through the default `text-processor` pipeline (which can be used for simple text customization, such as bolding text). Likewise, the provided puzzle-cell drawers expose `content-drawer` so you can bypass `content-map` and return custom content directly.
+
+For clue drawers, the `additional-info` dictionary contains `width`, `height`, and `marked`. The `marked` flag is set when the current clue coordinate is included in `marked-column-clues` or `marked-row-clues`.
 
 ## Files
 

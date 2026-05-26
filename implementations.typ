@@ -7,7 +7,7 @@
 // == `row` and `col`
 // The coordinates of this clue cell within the clue area.
 // == `additional-info`
-// A dictionary containing the puzzle `width` and `height`.
+// A dictionary containing the puzzle `width`, `height`, and `marked` status.
 // == `cell-size`
 // The width and height of the clue cell.
 // == `text-processor`
@@ -16,6 +16,9 @@
 // A callback that adds a marker to the clue cell when `additional-info.marked` is true.
 // It receives the cell content, the resolved foreground color, and the resolved background
 // color, and should return the modified, marked-up content.
+// == `content-drawer`
+// An optional callback that receives `(value, count, row, col, additional-info)`
+// and returns the clue content directly instead of using text-processor.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, `default-background`, and `color-lightness-threshold`
@@ -39,6 +42,7 @@
       length: 100%,
       stroke: (paint: foreground-color, cap: "round"),
     )))],
+  content-drawer: none,
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -101,9 +105,13 @@
       foreground-color = black
     }
   }
-  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
-    [#text-processor(str(count))]
-  })
+  let cell-content = if content-drawer == none {
+    text(fill: foreground-color, font: font, if value == none { "" } else {
+      [#text-processor(str(count))]
+    })
+  } else {
+    content-drawer(value, count, row, col, additional-info)
+  }
   if additional-info.marked {
     cell-content = marker(cell-content, foreground-color, background-color)
   }
@@ -119,7 +127,7 @@
 // == `row` and `col`
 // The coordinates of this clue cell within the clue area.
 // == `additional-info`
-// A dictionary containing the puzzle `width` and `height`.
+// A dictionary containing the puzzle `width`, `height`, and `marked` status.
 // == `cell-size`
 // The width and height of the clue cell.
 // == `text-processor`
@@ -128,6 +136,9 @@
 // A callback that adds a marker to the clue cell when `additional-info.marked` is true.
 // It receives the cell content, the resolved foreground color, and the resolved background
 // color, and should return the modified, marked-up content.
+// == `content-drawer`
+// An optional callback that receives `(value, count, row, col, additional-info)`
+// and returns the clue content directly instead of using `text-processor`.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, `default-background`, and `color-lightness-threshold`
@@ -151,6 +162,7 @@
       length: 100%,
       stroke: (paint: foreground-color, cap: "round"),
     )))],
+  content-drawer: none,
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -213,9 +225,13 @@
       foreground-color = black
     }
   }
-  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
-    [#text-processor(str(count))]
-  })
+  let cell-content = if content-drawer == none {
+    text(fill: foreground-color, font: font, if value == none { "" } else {
+      [#text-processor(str(count))]
+    })
+  } else {
+    content-drawer(value, count, row, col, additional-info)
+  }
   if additional-info.marked {
     cell-content = marker(cell-content, foreground-color, background-color)
   }
@@ -237,8 +253,11 @@
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `content-map`
-// A map from board values to displayed content. The special string `"fill"`
-// fills the whole cell with the resolved color.
+// A map or callback map from board values to displayed content. The special
+// string `"fill"` fills the whole cell with the resolved color.
+// == `content-drawer`
+// An optional callback that receives `(value, row, col, additional-info)` and
+// returns the cell content directly instead of using `content-map`.
 // == `colorizer`
 // A callback that post-processes non-filled content. It receives `(content,
 // color, value)`.
@@ -260,6 +279,7 @@
     "1": "fill",
     "default": none,
   ),
+  content-drawer: none,
   colorizer: (content, color, value) => {
     set text(fill: color)
     content
@@ -290,7 +310,11 @@
   } else {
     weak-stroke
   }
-  let content = get-value(value, content-map, default: none)
+  let content = if content-drawer == none {
+    get-value(value, content-map, default: none)
+  } else {
+    content-drawer(value, row, col, additional-info)
+  }
   let color = get-value(value, color-map, default: black)
   if type(color) == function {
     color = color(value, none)
@@ -319,7 +343,7 @@
 // == `row` and `col`
 // The coordinates of this clue cell within the clue area.
 // == `additional-info`
-// A dictionary containing the puzzle `width` and `height`.
+// A dictionary containing the puzzle `width`, `height`, and `marked` status.
 // == `cell-size`
 // The width and height of the clue cell.
 // == `text-processor`
@@ -328,6 +352,9 @@
 // A callback that adds a marker to the clue cell when `additional-info.marked` is true.
 // It receives the cell content, the resolved foreground color, and the resolved background
 // color, and should return the modified, marked-up content.
+// == `content-drawer`
+// An optional callback that receives `(value, count, row, col, additional-info)`
+// and returns the clue content directly instead of using `text-processor`.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, and `color-lightness-threshold`
@@ -349,6 +376,7 @@
       length: 100%,
       stroke: (paint: foreground-color, cap: "round"),
     )))],
+  content-drawer: none,
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -383,9 +411,13 @@
       foreground-color = black
     }
   }
-  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
-    [#text-processor(str(count))]
-  })
+  let cell-content = if content-drawer == none {
+    text(fill: foreground-color, font: font, if value == none { "" } else {
+      [#text-processor(str(count))]
+    })
+  } else {
+    content-drawer(value, count, row, col, additional-info)
+  }
   if additional-info.marked {
     cell-content = marker(cell-content, foreground-color, background-color)
   }
@@ -401,7 +433,7 @@
 // == `row` and `col`
 // The coordinates of this clue cell within the clue area.
 // == `additional-info`
-// A dictionary containing the puzzle `width` and `height`.
+// A dictionary containing the puzzle `width`, `height`, and `marked` status.
 // == `cell-size`
 // The width and height of the clue cell.
 // == `text-processor`
@@ -410,6 +442,9 @@
 // A callback that adds a marker to the clue cell when `additional-info.marked` is true.
 // It receives the cell content, the resolved foreground color, and the resolved background
 // color, and should return the modified, marked-up content.
+// == `content-drawer`
+// An optional callback that receives `(value, count, row, col, additional-info)`
+// and returns the clue content directly instead of using `text-processor`.
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `coloring`, `omit-default-background`, and `color-lightness-threshold`
@@ -419,7 +454,7 @@
 // Alternating background colors used when no value-based background is applied.
 // == `font`
 // The font used to render clue text.
-#let modern-row-cell-drawer(
+ #let modern-row-cell-drawer(
   value,
   count,
   row,
@@ -431,6 +466,7 @@
       length: 100%,
       stroke: (paint: foreground-color, cap: "round"),
     )))],
+  content-drawer: none,
   color-map: (:),
   coloring: "background",
   omit-default-background: true,
@@ -465,9 +501,13 @@
       foreground-color = black
     }
   }
-  let cell-content = text(fill: foreground-color, font: font, if value == none { "" } else {
-    [#text-processor(str(count))]
-  })
+  let cell-content = if content-drawer == none {
+    text(fill: foreground-color, font:font, if value == none { "" } else {
+      [#text-processor(str(count))]
+    })
+  } else {
+    content-drawer(value, count, row, col, additional-info)
+  }
   if additional-info.marked {
     cell-content = marker(cell-content, foreground-color, background-color)
   }
@@ -490,8 +530,11 @@
 // == `color-map`
 // A map or callback map used to resolve the color associated with `value`.
 // == `content-map`
-// A map from board values to displayed content. The special string `"fill"`
-// fills the inner rounded block with the resolved color.
+// A map or callback map from board values to displayed content. The special
+// string `"fill"` fills the inner rounded block with the resolved color.
+// == `content-drawer`
+// An optional callback that receives `(value, row, col, additional-info)` and
+// returns the cell content directly instead of using `content-map`.
 // == `colorizer`
 // A callback that post-processes non-filled content. It receives `(content,
 // color, value)`.
@@ -517,6 +560,7 @@
     ])),
     "default": "fill",
   ),
+  content-drawer: none,
   colorizer: (content, color, value) => {
     set text(fill: color)
     content
@@ -571,7 +615,11 @@
   }
   grid.cell(stroke: none, block(width: cell-size, height: cell-size, [
     #place(center + horizon, block(stroke: stroke, radius: radius, fill: background-color, height: 100%, width: 100%, {
-      let content = get-value(value, content-map, default: none)
+      let content = if content-drawer == none {
+        get-value(value, content-map, default: none)
+      } else {
+        content-drawer(value, row, col, additional-info)
+      }
       let color = get-value(value, color-map, default: black)
       if type(color) == function {
         color = color(value, none)
@@ -619,9 +667,9 @@
 // = Arguments:
 // For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, `marked-column-clues`, `marked-row-clues`, `hide-clues`, and `display-mask`, see `draw-board`.
 //
-// For `cell-size`, `show-solution`, `color-map`, `content-map`, `cell-colorizer`, `cell-default-background`, `weak-stroke`, and `strong-stroke`, see `classical-cell-drawer`.
+// For `cell-size`, `show-solution`, `color-map`, `content-map`, `cell-content-drawer`, `cell-colorizer`, `cell-default-background`, `weak-stroke`, and `strong-stroke`, see `classical-cell-drawer`.
 //
-// For`clue-text-processor`, `clue-coloring`, `clue-omit-default-background`, `clue-default-background`, `clue-color-lightness-threshold`, `font`, `weak-stroke`, `strong-stroke`, `clue-close-opposite-strokes`, `clue-draw-parallel-weak-strokes`, `clue-draw-parallel-strong-strokes`, and `clue-draw-perpendicular-strokes`
+// For`clue-text-processor`, `clue-content-drawer`, `clue-coloring`, `clue-omit-default-background`, `clue-default-background`, `clue-color-lightness-threshold`, `font`, `weak-stroke`, `strong-stroke`, `clue-close-opposite-strokes`, `clue-draw-parallel-weak-strokes`, `clue-draw-parallel-strong-strokes`, and `clue-draw-perpendicular-strokes`
 // see `classical-column-cell-drawer` and `classical-row-cell-drawer`.
 // == `text-size`
 // Sets the document text size before rendering the board.
@@ -643,12 +691,14 @@
     "0": scale(200%, text(baseline: -0.07em, sym.times)),
     "default": "fill",
   ),
+  cell-content-drawer: none,
   cell-colorizer: (content, color, value) => {
     set text(fill: color)
     content
   },
   cell-default-background: white,
   color-map: default-color-map,
+  clue-content-drawer: none,
   clue-text-processor: value => [#value],
   clue-coloring: "background",
   clue-omit-default-background: true,
@@ -668,6 +718,7 @@
       show-solution: show-solution,
       color-map: color-map,
       content-map: content-map,
+      content-drawer: cell-content-drawer,
       weak-stroke: weak-stroke,
       strong-stroke: strong-stroke,
       colorizer: cell-colorizer,
@@ -688,6 +739,7 @@
       draw-parallel-weak-strokes: clue-draw-parallel-weak-strokes,
       draw-parallel-strong-strokes: clue-draw-parallel-strong-strokes,
       draw-perpendicular-strokes: clue-draw-perpendicular-strokes,
+      content-drawer: clue-content-drawer,
     ),
     classical-row-cell-drawer.with(
       cell-size: cell-size,
@@ -704,6 +756,7 @@
       draw-parallel-weak-strokes: clue-draw-parallel-weak-strokes,
       draw-parallel-strong-strokes: clue-draw-parallel-strong-strokes,
       draw-perpendicular-strokes: clue-draw-perpendicular-strokes,
+      content-drawer: clue-content-drawer,
     ),
     column-clues: column-clues,
     row-clues: row-clues,
@@ -719,9 +772,9 @@
 // = Arguments:
 // For `board-matrix`, `corner-cell-drawer`, `column-clues`, `row-clues`, `marked-column-clues`, `marked-row-clues`, and `hide-clues`, see `draw-board`.
 //
-// For `cell-size`, `show-solution`, `cell-strong-stroke`, `cell-background-color`, `color-map`, `content-map`, `cell-colorizer`, and `cell-default-background`, see `modern-cell-drawer`.
+// For `cell-size`, `show-solution`, `cell-strong-stroke`, `cell-background-color`, `color-map`, `content-map`, `cell-content-drawer`, `cell-colorizer`, and `cell-default-background`, see `modern-cell-drawer`.
 //
-// For `clue-text-processor`, `clue-zebra-even`, `clue-zebra-odd`, `clue-coloring`, `clue-omit-default-background`, `clue-color-lightness-threshold`, and `font`, see `modern-column-cell-drawer` and `modern-row-cell-drawer`.
+// For `clue-text-processor`, `clue-content-drawer`, `clue-zebra-even`, `clue-zebra-odd`, `clue-coloring`, `clue-omit-default-background`, `clue-color-lightness-threshold`, and `font`, see `modern-column-cell-drawer` and `modern-row-cell-drawer`.
 // == `text-size`
 // Sets the document text size before rendering the board.
 #let modern-board = (
@@ -746,12 +799,14 @@
     ])),
     "default": "fill",
   ),
+  cell-content-drawer: none,
   cell-colorizer: (content, color, value) => {
     set text(fill: color)
     content
   },
   cell-default-background: white,
   color-map: default-color-map,
+  clue-content-drawer: none,
   clue-text-processor: value => text(0.7em, value),
   clue-zebra-even: luma(90%),
   clue-zebra-odd: white,
@@ -770,6 +825,7 @@
       background-color: cell-background-color,
       color-map: color-map,
       content-map: content-map,
+      content-drawer: cell-content-drawer,
       colorizer: cell-colorizer,
       default-background: cell-default-background,
     ),
@@ -782,6 +838,7 @@
       color-lightness-threshold: clue-color-lightness-threshold,
       zebra-even: clue-zebra-even,
       zebra-odd: clue-zebra-odd,
+      content-drawer: clue-content-drawer,
       font: font,
     ),
     modern-row-cell-drawer.with(
@@ -793,6 +850,7 @@
       color-lightness-threshold: clue-color-lightness-threshold,
       zebra-even: clue-zebra-even,
       zebra-odd: clue-zebra-odd,
+      content-drawer: clue-content-drawer,
       font: font,
     ),
     column-clues: column-clues,
