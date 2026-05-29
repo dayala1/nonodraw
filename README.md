@@ -21,23 +21,23 @@ The following examples have been generated from the code in the [examples](examp
 ### Solved boards
 
 <p>
-  <img src="./examples/Example%2001.svg" alt="Solved monocolor board in classical style" width="32%">
-  <img src="./examples/Example%2002.svg" alt="Solved monocolor board in tweaked classical style" width="32%">
-  <img src="./examples/Example%2003.svg" alt="Solved monocolor board in modern style" width="32%">
+  <img src="./examples/Example 01.svg" alt="Solved monocolor board in classical style" width="32%">
+  <img src="./examples/Example 02.svg" alt="Solved monocolor board in tweaked classical style" width="32%">
+  <img src="./examples/Example 03.svg" alt="Solved monocolor board in modern style" width="32%">
 </p>
 
 <p>
-  <img src="./examples/Example%2004.svg" alt="Solved multicolor board in classical style" width="32%">
-  <img src="./examples/Example%2005.svg" alt="Solved multicolor board in tweaked classical style" width="32%">
-  <img src="./examples/Example%2006.svg" alt="Solved multicolor board in modern style" width="32%">
+  <img src="./examples/Example 04.svg" alt="Solved multicolor board in classical style" width="32%">
+  <img src="./examples/Example 05.svg" alt="Solved multicolor board in tweaked classical style" width="32%">
+  <img src="./examples/Example 06.svg" alt="Solved multicolor board in modern style" width="32%">
 </p>
 
 ### Unsolved boards
 
 <p>
-  <img src="./examples/Example%2007.svg" alt="Unsolved monocolor board in classical style" width="32%">
-  <img src="./examples/Example%2008.svg" alt="Unsolved monocolor board in tweaked classical style" width="32%">
-  <img src="./examples/Example%2009.svg" alt="Unsolved monocolor board in modern style" width="32%">
+  <img src="./examples/Example 07.svg" alt="Unsolved monocolor board in classical style" width="32%">
+  <img src="./examples/Example 08.svg" alt="Unsolved monocolor board in tweaked classical style" width="32%">
+  <img src="./examples/Example 09.svg" alt="Unsolved monocolor board in modern style" width="32%">
 </p>
 
 ### Only solution
